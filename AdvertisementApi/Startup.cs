@@ -35,7 +35,10 @@ namespace AdvertisementApi
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddScoped<IMobileRepository<MobilePhone>, MobileRepository>();
             services.AddScoped<IManufacturerRepository<Manufacturer>, ManufacturerRepository>();
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1.0", new Info { Title = "Main API v1.0", Version = "v1.0" }); });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1.0", new Info { Title = "Main API v1.0", Version = "v1.0" });
+                c.CustomOperationIds(api => $"{api.ActionDescriptor.RouteValues["controller"]}_{api.ActionDescriptor.RouteValues["action"]}");});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,8 +58,13 @@ namespace AdvertisementApi
             app.UseMvc();
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Versioned API v1.0"); });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1.0/swagger.json", "Versioned API v1.0");
+                c.RoutePrefix = string.Empty;
+            });
         }
- 
+
     }
 }
+
